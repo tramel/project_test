@@ -1,0 +1,79 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+
+int main(){
+
+typedef struct valeurs = {int temperature, int pression};
+int tube_1[2],tube_2[2];
+int c = 10;
+char p; // lecture du tube
+ if(pipe(tube_1))
+	{
+	perror("Pb_sur-creation_du_tube");
+	exit(-1);
+	}
+ switch(fork())
+	{
+	 case -1:
+		{
+		perror("pb_fork");
+		exit(-2);
+		}
+	 case  0: // dans le premier fils
+		{
+		close(tube_1[0]);
+		write(tube_1[1],&c,sizeof(int));
+		exit(0);
+		}
+	case  1: // on est dans le pere
+		{
+		
+		if(pipe(tube_2))
+		{
+		perror("Pb_sur-creation_du_tube");
+		exit(-1);
+		}
+		switch(fork())
+			{
+			 case -1:
+				{
+				perror("pb_fork");
+				exit(-2);
+				}
+			 case  0:// dans le deuxieme fils
+				{
+				close(tube_2[0]);
+				write(tube_2[1],&c,sizeof(int));
+				exit(0);
+				}
+			case  1: // on est dans le pere
+				{
+					close(tube_1[1]);
+					close(tube_2[1]);
+					while(read(tube_1[0],&p,sizeof(char))
+					valeurs.temperature = atoi(p);
+					while(read(tube_2[0],&p,sizeof(char))
+					valeurs.pression = atoi(p);
+
+					
+		
+				}
+	}
+
+
+
+
+
+
+
+
+
+}
